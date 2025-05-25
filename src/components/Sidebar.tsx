@@ -1,4 +1,5 @@
 import PostCreationModal from "@/components/PostCreationModal";
+import { useLogin } from "@/hooks";
 import {
     Home,
     Search,
@@ -8,6 +9,7 @@ import {
     Heart,
     Plus,
     User,
+    LogOut
 } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
@@ -32,6 +34,7 @@ const menuItems = [
 
 export default function Sidebar() {
     const [showModal, setShowModal] = useState(false);
+    const { onLogout } = useLogin();
     return (
         <div className="w-60 min-h-screen border-r px-4 py-6 space-y-6">
             <div className="text-2xl font-bold mb-6 px-2">Instagram</div>
@@ -49,6 +52,13 @@ export default function Sidebar() {
                         </span>
                     </Link>
                 ))}
+                <p
+                    onClick={onLogout}
+                    className="flex items-center gap-4 px-2 py-2 rounded-xl hover:bg-gray-100 cursor-pointer"
+                >
+                    <LogOut className="w-5 h-5" />
+                    <span className="font-medium text-sm">Đăng xuất</span>
+                </p>
                 <p
                     onClick={() => setShowModal(true)}
                     className="flex items-center gap-4 px-2 py-2 rounded-xl hover:bg-gray-100 cursor-pointer"

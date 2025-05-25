@@ -1,29 +1,56 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Button } from "@/components/ui/button";
+import { useLogin } from "@/hooks";
 import { FC } from "react";
+import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 
 export const AuthLogin: FC = () => {
+  const {mutateLogin} = useLogin();
+  const { register, handleSubmit, formState: { errors } } = useForm({
+    defaultValues: {
+      email: 'super_admin@gmail.com',
+      password: '06011998'
+    }
+  });
+  const onSubmit = async (data: any) => mutateLogin.mutate(data);
   return (
     <div className="min-h-screen bg-white flex items-center justify-center">
       <div className="w-full max-w-sm">
         <h1 className="text-5xl font-cursive text-black text-center mb-8">Instagram</h1>
 
-        <form className="bg-white p-6 rounded">
+        <form className="bg-white p-6 rounded" autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
           <input
             type="text"
             placeholder="Số điện thoại, tên người dùng hoặc email"
-            className="w-full mb-3 px-4 py-2 bg-white border border-gray-300 text-gray-900 rounded text-sm focus:outline-none"
+            className={`w-full mb-1 px-4 py-2 bg-white border rounded text-sm focus:outline-none ${errors.email ? 'border-red-500' : 'border-gray-300'
+              }`}
+            aria-invalid={!!errors.email}
+            aria-describedby="email-error"
+            {...register('email', {
+              required: 'Email is required',
+              pattern: {
+                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                message: "invalid email address"
+              }
+            })}
           />
+          {errors.email && <p id="email-error" className="text-red-500 text-xs mb-2">{errors.email.message}</p>}
           <input
             type="password"
             placeholder="Mật khẩu"
-            className="w-full mb-4 px-4 py-2 bg-white border border-gray-300 text-gray-900 rounded text-sm focus:outline-none"
+            className={`w-full mb-4 px-4 py-2 bg-white border rounded text-sm focus:outline-none ${errors.password ? 'border-red-500' : 'border-gray-300'
+              }`}
+            aria-invalid={!!errors.password}
+            aria-describedby="password-error"
+            {...register('password', {
+              required: 'Password is required'
+            })}
           />
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white font-semibold py-2 rounded hover:bg-blue-600 transition"
-          >
+          {errors.password && <p id="password-error" className="text-red-500 text-xs mb-3">{errors.password.message}</p>}
+          <Button className="w-full" loading={mutateLogin.isLoading}>
             Đăng nhập
-          </button>
+          </Button>
         </form>
 
         <div className="flex items-center my-4 text-gray-400">

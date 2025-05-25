@@ -4,6 +4,7 @@ import axios from 'axios'
 
 interface AxiosConfigProps {
   baseURL?: string,
+  argToken?:string
 }
 
 export const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
@@ -25,12 +26,12 @@ export const AxiosConfig = (props?: AxiosConfigProps) => {
 
   config.interceptors.request.use(async (headerConfig) => {
     const { token } = await validateRefreshToken();
-    headerConfig.headers.Authorization = `Bearer ${token}`
+    headerConfig.headers.Authorization = `Bearer ${props?.argToken || token}`
     return headerConfig;
   });
   config.interceptors.response.use(
     (response) => {
-      return response.data;
+      return response;
     },
     (error) => {
       throw error;
