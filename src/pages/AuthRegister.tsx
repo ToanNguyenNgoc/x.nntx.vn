@@ -54,7 +54,7 @@ export const AuthRegister: FC = () => {
     }
   })
   const onSubmit = (data: ReqForm) => {
-    mutate.mutate(Object.assign(data, { recaptcha }))
+    mutate.mutate(Object.assign(data, { recaptcha, otp: open ? data.otp : undefined }))
   }
   return (
     <GoogleReCaptchaProvider
