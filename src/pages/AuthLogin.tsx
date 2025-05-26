@@ -9,8 +9,8 @@ export const AuthLogin: FC = () => {
   const {mutateLogin} = useLogin();
   const { register, handleSubmit, formState: { errors } } = useForm({
     defaultValues: {
-      email: 'super_admin@gmail.com',
-      password: '06011998'
+      email: '',
+      password: ''
     }
   });
   const onSubmit = async (data: any) => mutateLogin.mutate(data);

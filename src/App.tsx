@@ -1,5 +1,6 @@
 import { MainRoute } from "./routes";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { RegisterLayout } from "./components/RegisterLayout";
 
 const queryClientOption = new QueryClient({
     defaultOptions: {
@@ -14,6 +15,7 @@ function App() {
     return (
         <QueryClientProvider client={queryClientOption}>
             <MainRoute />
+            <RegisterLayout />
         </QueryClientProvider>
     )
 }

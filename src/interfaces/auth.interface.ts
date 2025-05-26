@@ -2,6 +2,16 @@ export interface ReqLogin {
   email: string;
   password: string
 }
+export interface ReqRegister {
+  email: string,
+  telephone?: string,
+  password: string,
+  name?: string,
+  gender?: 1 | 0,
+  birthday: string,
+  recaptcha?: string,
+  otp?: string
+}
 //
 export interface ResLogin extends ResUser {
   token: string

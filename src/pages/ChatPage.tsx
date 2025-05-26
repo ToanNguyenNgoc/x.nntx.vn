@@ -1,7 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import ChatSidebar from "@/components/ChatSidebar";
 import ChatWindow from "@/components/ChatWindow";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Pusher from "pusher-js";
+import { useProfileStore } from "@/stores";
 
+//@ts-ignore
+window.Pusher = Pusher;
 interface Message {
   id: number;
   fromSelf: boolean;
@@ -10,6 +16,7 @@ interface Message {
 }
 
 export default function ChatPage() {
+  const {profile} = useProfileStore(state => state)
   const [selectedUser, setSelectedUser] = useState("TRIGGERCLUB");
 
   const handleRecallMessage = (id: number) => {
@@ -20,7 +27,7 @@ export default function ChatPage() {
       ),
     }));
   };
-  
+
 
   const [allMessages, setAllMessages] = useState<Record<string, Message[]>>({
     "TRIGGERCLUB": [
@@ -32,6 +39,28 @@ export default function ChatPage() {
     ],
   });
 
+  useEffect(() => {
+    Pusher.logToConsole = true;
+    const pusher = new Pusher('e39fb57ddf7d806bbea7', {
+      cluster: 'ap1',
+      authEndpoint: `${import.meta.env.VITE_REACT_APP_API_URL}/broadcasting/auth`,
+      auth: {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('api_token')}`,
+          Accept: 'application/json',
+        },
+      },
+    });
+    const channel = pusher.subscribe(`private-subscribe-chat.user_id.${profile?.id}`);
+    channel.bind('emit-subscribe-chat', function (data: any) {
+      console.log(':inbox_tray: Received message:', data);
+    });
+    return () => {
+      channel.unbind_all();
+      channel.unsubscribe();
+    };
+  }, []);
+
   return (
     <div className="flex h-screen">
       <ChatSidebar
@@ -39,10 +68,10 @@ export default function ChatPage() {
         onSelectUser={(user) => setSelectedUser(user)}
       />
       <ChatWindow
-          username={selectedUser}
-          messages={allMessages[selectedUser] || []}
-          onRecallMessage={handleRecallMessage}
-          onSendMessage={(newMessage) => {
+        username={selectedUser}
+        messages={allMessages[selectedUser] || []}
+        onRecallMessage={handleRecallMessage}
+        onSendMessage={(newMessage) => {
           setAllMessages((prev) => ({
             ...prev,
             [selectedUser]: [...(prev[selectedUser] || []), newMessage],
