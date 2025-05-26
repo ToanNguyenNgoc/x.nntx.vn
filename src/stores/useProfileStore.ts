@@ -1,8 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { AuthApi } from '@/apis';
+import { ResUser } from '@/interfaces';
 import { create } from 'zustand';
 
-export const useProfileStore = create((set, _get) => ({
+type ProfileStoreType = {
+  loadingProfile: boolean;
+  profile: ResUser | null;
+  onGetProfile: () => Promise<void>;
+  onLogout: () => void;
+}
+
+export const useProfileStore = create<ProfileStoreType>()((set, _get) => ({
   loadingProfile: true,
   profile: null,
   onGetProfile: async () => {

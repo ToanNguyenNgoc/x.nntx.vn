@@ -19,6 +19,7 @@ import {
 import { useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useProfileStore } from "@/stores";
 
 const formSchema = z.object({
     name: z.string().min(2),
@@ -35,11 +36,13 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>;
 
 export default function ProfileForm() {
+    const {profile} = useProfileStore(state => state);
+    console.log(profile);
     const [avatar, setAvatar] = useState<string | null>(null);
     const form = useForm<FormData>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            name: "",
+            name:profile?.name || "",
             bio: "",
             website: "",
             location: "",
@@ -99,7 +102,7 @@ export default function ProfileForm() {
                     />
 
                     {/* Bio */}
-                    <FormField
+                    {/* <FormField
                         control={form.control}
                         name="bio"
                         render={({ field }) => (
@@ -114,10 +117,10 @@ export default function ProfileForm() {
                                 <FormMessage />
                             </FormItem>
                         )}
-                    />
+                    /> */}
 
                     {/* Location */}
-                    <FormField
+                    {/* <FormField
                         control={form.control}
                         name="location"
                         render={({ field }) => (
@@ -132,10 +135,10 @@ export default function ProfileForm() {
                                 <FormMessage />
                             </FormItem>
                         )}
-                    />
+                    /> */}
 
                     {/* Website */}
-                    <FormField
+                    {/* <FormField
                         control={form.control}
                         name="website"
                         render={({ field }) => (
@@ -150,7 +153,7 @@ export default function ProfileForm() {
                                 <FormMessage />
                             </FormItem>
                         )}
-                    />
+                    /> */}
 
                     {/* Birthday */}
                     <div className="flex gap-2">

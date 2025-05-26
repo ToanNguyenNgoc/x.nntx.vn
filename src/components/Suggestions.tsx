@@ -1,3 +1,5 @@
+import { useProfileStore } from "@/stores";
+
 const suggestedUsers = [
   { username: "trang_bi_bo", avatar: "https://i.pravatar.cc/150?img=4" },
   { username: "doanhdao77", avatar: "https://i.pravatar.cc/150?img=5" },
@@ -5,12 +7,13 @@ const suggestedUsers = [
 ];
 
 export function Suggestions() {
+  const {profile} = useProfileStore(state => state)
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-3">
-          <img src="https://i.pravatar.cc/150?img=8" className="w-10 h-10 rounded-full" />
-          <div className="text-sm font-semibold">air_drops_ldc</div>
+          <img src={profile?.avatar} className="w-10 h-10 rounded-full" />
+          <div className="text-sm font-semibold">{profile?.name}</div>
         </div>
         <button className="text-blue-500 text-sm">Chuyển</button>
       </div>

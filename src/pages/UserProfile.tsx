@@ -1,5 +1,6 @@
 import PostPreview from "@/components/PostPreview";
 import { Button } from "@/components/ui/button";
+import { useProfileStore } from "@/stores";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -21,6 +22,7 @@ const posts = [
 ];
 
 export default function UserProfile() {
+    const {profile} = useProfileStore(state => state)
     const [activeTab, setActiveTab] = useState<"posts" | "saved" | "tagged">(
         "posts"
     );
@@ -31,12 +33,12 @@ export default function UserProfile() {
             {/* Top profile info */}
             <div className="flex items-start gap-10">
                 <img
-                    src="https://i.imgur.com/Jz5r8H8.png"
+                    src={profile?.avatar}
                     className="w-32 h-32 rounded-full object-cover"
                 />
                 <div className="flex-1 space-y-2">
                     <div className="flex items-center gap-4">
-                        <h2 className="text-xl font-semibold">air_drops_ldc</h2>
+                        <h2 className="text-xl font-semibold">{profile?.name}</h2>
                         <Button
                             variant="secondary"
                             className="border px-3 py-1 rounded text-sm cursor-pointer"
@@ -62,7 +64,7 @@ export default function UserProfile() {
                             <strong>10</strong> đang theo dõi
                         </div>
                     </div>
-                    <div className="text-sm text-gray-600">@air_drops_ldc</div>
+                    <div className="text-sm text-gray-600">@{profile?.name}</div>
                 </div>
             </div>
 

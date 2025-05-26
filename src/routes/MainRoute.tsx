@@ -1,13 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect } from "react";
 import { AuthRoute } from "./AuthRoute";
 import { PrivateRoute } from "./PrivateRoute";
 import { useProfileStore } from "@/stores";
 
 export const MainRoute = () => {
-  const stateProfile = useProfileStore((state: any) => state);
-  const { loadingProfile, profile, onGetProfile } = stateProfile;
+  const {loadingProfile, profile, onGetProfile} = useProfileStore(state => state);
   useEffect(() => {
     onGetProfile()
   }, [])
