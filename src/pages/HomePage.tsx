@@ -1,3 +1,4 @@
+import NotificationPopup from "@/components/NotificationPopup";
 import PostCard from "@/components/PostCard";
 import { Stories } from "@/components/Stories";
 import { Suggestions } from "@/components/Suggestions";
@@ -54,6 +55,7 @@ export default function HomePage() {
             <div className="w-[320px] lg:block px-6 py-4">
                 <Suggestions />
             </div>
+            <NotificationPopup />
         </div>
     );
 }

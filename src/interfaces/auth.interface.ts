@@ -44,4 +44,5 @@ export interface ResUser {
   updated_at: string;
   roles: ResRole[];
   avatar: string;
+  is_follow:boolean
 }

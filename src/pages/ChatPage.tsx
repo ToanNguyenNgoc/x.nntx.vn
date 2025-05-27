@@ -5,6 +5,7 @@ import ChatWindow from "@/components/ChatWindow";
 import { useEffect, useState } from "react";
 import Pusher from "pusher-js";
 import { useProfileStore } from "@/stores";
+import { API_URL } from "@/configs";
 
 //@ts-ignore
 window.Pusher = Pusher;
@@ -16,7 +17,7 @@ interface Message {
 }
 
 export default function ChatPage() {
-  const {profile} = useProfileStore(state => state)
+  const { profile } = useProfileStore(state => state)
   const [selectedUser, setSelectedUser] = useState("TRIGGERCLUB");
 
   const handleRecallMessage = (id: number) => {
@@ -43,7 +44,7 @@ export default function ChatPage() {
     Pusher.logToConsole = true;
     const pusher = new Pusher('e39fb57ddf7d806bbea7', {
       cluster: 'ap1',
-      authEndpoint: `${import.meta.env.VITE_REACT_APP_API_URL}/broadcasting/auth`,
+      authEndpoint: `${API_URL}/broadcasting/auth`,
       auth: {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('api_token')}`,
@@ -51,8 +52,12 @@ export default function ChatPage() {
         },
       },
     });
-    const channel = pusher.subscribe(`private-subscribe-chat.user_id.${profile?.id}`);
-    channel.bind('emit-subscribe-chat', function (data: any) {
+    // const channel = pusher.subscribe(`private-subscribe-chat.user_id.${profile?.id}`);
+    // channel.bind('emit-subscribe-chat', function (data: any) {
+    //   console.log(':inbox_tray: Received message:', data);
+    // });
+    const channel = pusher.subscribe(`private-subscribe-notification.user_id.${profile?.id}`);
+    channel.bind('emit-notification', function (data: any) {
       console.log(':inbox_tray: Received message:', data);
     });
     return () => {
