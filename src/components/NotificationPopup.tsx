@@ -4,6 +4,8 @@ import { X } from "lucide-react";
 import Avatar from "./Avatar";
 import { ResMessageNoti } from "@/interfaces";
 import { createRef, forwardRef, useImperativeHandle, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { NOTI_TYPE } from "@/utils";
 
 export interface NotiProps { }
 export interface NotiHandle {
@@ -23,7 +25,7 @@ export class Noti {
     this.notiRef.current?.open(arg);
   }
 
-  static offLoading() {
+  static close() {
     this.notiRef.current?.close();
   }
 }
@@ -50,13 +52,22 @@ const NotificationPopup = forwardRef<NotiHandle, NotiProps>((_props, ref) => {
     setTimeout(() => {
       setShow(false);
       setNoti(null);
-    }, 300);
+    }, 100);
   };
+  const navigate = useNavigate();
 
   if (!show || !noti) return null;
 
+  const onNavigateNoti = () => {
+    if (noti.message.type_id === NOTI_TYPE.CHAT) {
+      navigate(`/messages?topic_id=${noti.message.payload_id}`)
+    }
+    handleClose();
+  }
+
   return (
     <div
+      onClick={onNavigateNoti}
       className="fixed top-4 right-4 bg-[#242526] text-white rounded-xl shadow-lg p-4 flex w-[320px] z-50 animate-fade-in"
     >
       <div className="relative">
@@ -75,7 +86,7 @@ const NotificationPopup = forwardRef<NotiHandle, NotiProps>((_props, ref) => {
 
       <button
         className="ml-2 text-gray-400 hover:text-white"
-        onClick={handleClose}
+        onClick={(e) => { e.stopPropagation(); handleClose() }}
       >
         <X className="w-4 h-4" />
       </button>

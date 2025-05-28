@@ -1,3 +1,4 @@
+import { TopicApi } from "@/apis";
 import Avatar from "@/components/Avatar";
 import FollowerListModal from "@/components/FollowerListModal";
 import FollowingListModal from "@/components/FollowingListModal";
@@ -5,8 +6,9 @@ import FullPageLoader from "@/components/FullPageLoader";
 import PostPreview from "@/components/PostPreview";
 import { Button } from "@/components/ui/button";
 import { useFollow, useGetDetailUser, useGetFollowerList, useGetFollowingList } from "@/hooks";
-import { ResUser } from "@/interfaces";
+import { ReqPostTopic, Res, ResTopic, ResUser } from "@/interfaces";
 import { useProfileStore } from "@/stores";
+import { useMutation } from "@tanstack/react-query";
 import { FC, Fragment, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -81,12 +83,7 @@ export default function UserProfile() {
                 >
                   {isFollow ? 'Đang theo dõi' : 'Theo dõi'}
                 </Button>
-                <Button
-                  variant="secondary"
-                  className="border px-3 py-1 rounded text-sm cursor-pointer"
-                >
-                  Nhắn tin
-                </Button>
+                {user && <PostMessage user={user} />}
               </div>
           }
           <div className="flex gap-6 text-sm">
@@ -207,5 +204,28 @@ const FollowContainer: FC<{ user: ResUser, followerCountState: number, following
       {showFollowerModal && <FollowerListModal userId={user.id} onClose={() => setShowFollowerModal(false)} />}
       {showFollowingModal && <FollowingListModal userId={user.id} onClose={() => setShowFollowingModal(false)} />}
     </Fragment>
+  )
+}
+
+const PostMessage: FC<{ user: ResUser }> = ({ user }) => {
+  const navigate = useNavigate();
+  const mutate = useMutation<Res<ResTopic>, unknown, ReqPostTopic>({
+    mutationFn: body => TopicApi.post(body),
+    onSuccess: (data) => {
+      navigate(`/messages?topic_id=${data.context.id}`)
+    }
+  })
+  return (
+    <Button
+      onClick={() => mutate.mutate({
+        recipient_ids: [user.id],
+        type: 'DUOS'
+      })}
+      variant="secondary"
+      className="border px-3 py-1 rounded text-sm cursor-pointer"
+      loading={mutate.isLoading}
+    >
+      Nhắn tin
+    </Button>
   )
 }

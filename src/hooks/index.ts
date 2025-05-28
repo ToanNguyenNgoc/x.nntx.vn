@@ -6,3 +6,8 @@ export * from './useGetDetailUser';
 export * from './useFollow';
 export * from './useGetUserFollowing';
 export * from './useGetUserFollower';
+export * from './useGetInfinitiesTopics';
+export * from './useGetTopic';
+export * from './useGetTopicName';
+export * from './useGetParamsUrl';
+export * from './usePostMedia';

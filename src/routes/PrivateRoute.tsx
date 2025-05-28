@@ -1,3 +1,4 @@
+import NotificationSide from "@/components/NotificationSide"
 import ProfileForm from "@/components/ProfileForm"
 import Sidebar from "@/components/Sidebar"
 import NotificationProvider from "@/contexts/NotificationProvider"
@@ -12,6 +13,7 @@ export const PrivateRoute = () => {
     <NotificationProvider>
       <div className="flex">
         <Sidebar />
+        <NotificationSide />
         <div className="flex-1 bg-gray-50 min-h-screen">
           <Routes>
             <Route path="/" element={<HomePage />} />
