@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from "react";
-import { MoreVertical } from "lucide-react";
+import { Heart, MoreVertical } from "lucide-react";
 import ChatInput from "@/components/ChatInput";
 import { PusherService } from "@/services";
 import { ReqMessage, ReqPostMessage, Res, ResMessage, ResPaginate } from "@/interfaces";
@@ -52,18 +52,19 @@ export default function ChatWindow({
     sort: '-created_at'
   });
   const [newMessages, setNewMessages] = useState<ResMessage[]>([]);
+  const tempIds = useRef<Set<number>>(new Set());
   useEffect(() => {
     const pusher = PusherService.getInstance().getPusher();
     pusher
       .subscribe(`private-subscribe-topic_id.${topic_id}`)
       .bind('emit-topic', (data: { message: ResMessage }) => {
-        // Log(msg);
-        if (data.message.user_id !== profile?.id) {
-          setNewMessages(prev => {
-            const exists = prev.some(msg => msg.id === data.message.id);
-            return exists ? prev : [data.message, ...prev];
-          });
-        }
+        const incoming = data.message;
+        setNewMessages((prev) => {
+          const filtered = [...prev].filter(msg => !tempIds.current.has(msg.id));
+          const exists = filtered.some(msg => msg.id === incoming.id);
+          if (exists) return filtered;
+          return [incoming, ...filtered];
+        });
       });
     return () => {
       pusher.unsubscribe(`private-subscribe-topic_id.${topic_id}`);
@@ -130,7 +131,8 @@ export default function ChatWindow({
       media_ids: payload.medias.map(i => i.model_id),
       reply_id: undefined
     }
-    const temp_id = new Date().getTime();
+    const temp_id = -Date.now();
+    tempIds.current.add(temp_id);
     setNewMessages([{
       topic_id,
       id: temp_id,
@@ -143,12 +145,7 @@ export default function ChatWindow({
       updated_at: moment().format('YYYY-MM-DD HH:mm'),
       user: profile
     }, ...newMessages]);
-    MessageApi.postMessage(body).then(res => {
-      setNewMessages(prev =>
-        prev.map(msg =>
-          msg.id === temp_id ? { ...msg, id: res.context.id } : msg
-        )
-      );
+    MessageApi.postMessage(body).then(() => {
       scrollToBottom();
     });
   }
@@ -206,6 +203,8 @@ export default function ChatWindow({
 
 const MessageItem = ({ item, fromSelf }: { item: ResMessage, fromSelf: boolean }) => {
   const recall = false;
+  const reactions = 10;
+  const reacted = false;
   return (
     <div
       className={`flex mb-4 ${fromSelf ? "justify-end" : "justify-start"
@@ -216,6 +215,7 @@ const MessageItem = ({ item, fromSelf }: { item: ResMessage, fromSelf: boolean }
           }`}
       >
         <div
+          style={{ opacity: item.id > 0 ? 1 : 0.8, transition:'all .3s' }}
           className={`max-w-xs text-sm p-2 rounded-xl break-words ${fromSelf
             ? "bg-black text-white"
             : "bg-gray-200 text-black"
@@ -255,15 +255,29 @@ const MessageItem = ({ item, fromSelf }: { item: ResMessage, fromSelf: boolean }
                 ))}
               </div>
               {item.body && <div>{item.body}</div>}
-              <div className="text-xs mt-1 text-right opacity-60">
+              <div className="text-xs mt-1 mb-1 text-right opacity-60">
                 {formatTime(item.created_at)}
+              </div>
+              <div className="flex items-center gap-1" style={{display:'none'}}>
+                <button
+                  disabled={item.id < 0}
+                  className="hover:scale-110 transition cursor-pointer"
+                >
+                  <Heart
+                    size={14}
+                    className={reacted ? "text-red-500 fill-red-500" : "text-gray-400"}
+                  />
+                </button>
+                {reactions > 0 && (
+                  <span className="text-xs">{reactions}</span>
+                )}
               </div>
             </>
           )}
         </div>
 
         {!recall && (
-          <div className="relative">
+          <div className="relative" style={{display:'none'}}>
             <button
               // onClick={() =>
               //   setSelectedMessageId(msg.id)
