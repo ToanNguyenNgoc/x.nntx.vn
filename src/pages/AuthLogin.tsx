@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button } from "@/components/ui/button";
 import { useLogin } from "@/hooks";
-import { FC } from "react";
+import { GoogleLogin } from "@react-oauth/google";
+import { FC} from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 
 export const AuthLogin: FC = () => {
-  const {mutateLogin} = useLogin();
+  const { mutateLogin } = useLogin();
   const { register, handleSubmit, formState: { errors } } = useForm({
     defaultValues: {
       email: '',
@@ -59,7 +60,7 @@ export const AuthLogin: FC = () => {
           <div className="flex-grow h-px bg-gray-300" />
         </div>
 
-        <button className="w-full flex items-center justify-center text-blue-600 font-semibold mb-3">
+        {/* <button className="w-full flex items-center justify-center text-blue-600 font-semibold mb-3">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="currentColor"
@@ -69,7 +70,11 @@ export const AuthLogin: FC = () => {
             <path d="M22.675 0h-21.35C.593 0 0 .593 0 1.325v21.351C0 23.408.593 24 1.325 24h11.497V14.706h-3.13v-3.62h3.13V8.413c0-3.1 1.893-4.788 4.658-4.788 1.325 0 2.464.099 2.794.143v3.24l-1.918.001c-1.504 0-1.796.715-1.796 1.763v2.313h3.587l-.467 3.62h-3.12V24h6.116C23.407 24 24 23.408 24 22.676V1.325C24 .593 23.407 0 22.675 0z" />
           </svg>
           Đăng nhập bằng Facebook
-        </button>
+        </button> */}
+        <GoogleLogin
+          onSuccess={response => console.log(response)}
+          onError={()=>{}}
+        />
 
         <div className="text-center text-sm text-blue-500 mb-2 cursor-pointer hover:underline">
           Quên mật khẩu?
