@@ -2,12 +2,12 @@
 import { Button } from "@/components/ui/button";
 import { useLogin } from "@/hooks";
 import { GoogleLogin } from "@react-oauth/google";
-import { FC} from "react";
+import { FC } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 
 export const AuthLogin: FC = () => {
-  const { mutateLogin } = useLogin();
+  const { mutateLogin, mutateLoginGoogle } = useLogin();
   const { register, handleSubmit, formState: { errors } } = useForm({
     defaultValues: {
       email: '',
@@ -71,10 +71,11 @@ export const AuthLogin: FC = () => {
           </svg>
           Đăng nhập bằng Facebook
         </button> */}
-        <GoogleLogin
-          onSuccess={response => console.log(response)}
-          onError={()=>{}}
-        />
+        <div className="mb-6">
+          <GoogleLogin
+            onSuccess={response => mutateLoginGoogle.mutate({ credential: String(response.credential) })}
+          />
+        </div>
 
         <div className="text-center text-sm text-blue-500 mb-2 cursor-pointer hover:underline">
           Quên mật khẩu?
